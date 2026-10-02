@@ -48,6 +48,25 @@ plugin's Hyprland Lua file:
 hyprctl reload
 ```
 
+## Dependencies
+
+Requires Omarchy's Quickshell plugin system, Hyprland with Omarchy's Lua
+helpers, and `hyprctl`. It uses no external packages or network services.
+
+## Remove
+
+Remove the managed loader block from `~/.config/hypr/bindings.lua`, then reload
+Hyprland and remove the shell plugin:
+
+```bash
+hyprctl reload
+omarchy plugin remove roubilibo.windows-new-workspace
+```
+
+The saved toggle state is in `$XDG_STATE_HOME/omarchy/windows-new-workspace`, or
+`~/.local/state/omarchy/windows-new-workspace` when `XDG_STATE_HOME` is unset.
+Delete that file separately if you also want to remove the saved state.
+
 ## Layout
 
 - `manifest.json` and `src/Service.qml` let Omarchy discover and enable this
