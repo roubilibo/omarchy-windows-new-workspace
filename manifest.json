@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "roubilibo.windows-new-workspace",
+  "name": "New Workspace for Tiled Windows",
+  "version": "1.0.0",
+  "author": "roubilibo",
+  "license": "MIT",
+  "description": "Move each newly opened tiled window to its own workspace.",
+  "kinds": [
+    "service",
+    "bar-widget"
+  ],
+  "keepLoaded": true,
+  "entryPoints": {
+    "service": "src/Service.qml",
+    "barWidget": "src/StatusWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "New Workspace",
+    "description": "Show whether new tiled windows use new workspaces.",
+    "category": "System",
+    "allowMultiple": false,
+    "defaultSection": "right"
+  }
+}
