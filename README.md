@@ -11,22 +11,14 @@ inactive shapes differ; the inactive icon does not use opacity or muted colors.
 
 ## Install
 
-For a published Git repository, use Omarchy's plugin installer:
+Install and enable the plugin with Omarchy's plugin manager:
 
 ```bash
-omarchy plugin add <git-url> --enable
+omarchy plugin add https://github.com/roubilibo/omarchy-windows-new-workspace.git --enable
 ```
 
-For local development from this repository, validate the plugin, copy it to
-Omarchy's user plugin directory, then register and enable it:
-
-```bash
-omarchy plugin validate ./roubilibo.windows-new-workspace
-mkdir -p ~/.config/omarchy/plugins/roubilibo.windows-new-workspace
-cp -a ./roubilibo.windows-new-workspace/. ~/.config/omarchy/plugins/roubilibo.windows-new-workspace/
-omarchy-shell shell rescanPlugins
-omarchy plugin enable roubilibo.windows-new-workspace --section right
-```
+Omarchy validates the manifest and lets you choose the bar section during
+installation. The plugin's default bar section is right.
 
 ## Install Hyprland binding
 
