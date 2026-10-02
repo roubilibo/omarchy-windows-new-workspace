@@ -11,14 +11,17 @@ inactive shapes differ; the inactive icon does not use opacity or muted colors.
 
 ## Install
 
-Install and enable the plugin with Omarchy's plugin manager:
+Run this from an interactive terminal to install and enable the plugin with
+Omarchy's plugin manager:
 
 ```bash
 omarchy plugin add https://github.com/roubilibo/omarchy-windows-new-workspace.git --enable
 ```
 
-Omarchy validates the manifest and lets you choose the bar section during
-installation. The plugin's default bar section is right.
+Omarchy validates the manifest, then asks where to place the bar icon: left,
+center, or right. Right is preselected. Do not add `--yes`; that skips the
+interactive placement choice. You can change the section later with
+`omarchy bar move roubilibo.windows-new-workspace --section <left|center|right>`.
 
 ## Install Hyprland binding
 
@@ -44,13 +47,6 @@ plugin's Hyprland Lua file:
 ```bash
 hyprctl reload
 ```
-
-The `--section right` option places its status icon in the right bar section;
-choose another section if desired. The loader only registers the feature while
-the plugin ID is enabled in `~/.config/omarchy/shell.json`. Disabling the plugin
-and reloading Hyprland removes the binding and window event handler. Remove the
-block to remove the loader entirely. The toggle state is saved under
-`~/.local/state/omarchy/windows-new-workspace`.
 
 ## Layout
 
