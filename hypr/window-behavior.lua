@@ -112,7 +112,7 @@ hl.on("window.destroy", function()
   end
 
   local closed_workspace = hl.get_workspace(closed_workspace_id)
-  if closed_workspace and closed_workspace.windows > 0 then
+  if closed_workspace and #hl.get_workspace_windows(closed_workspace_id) > 0 then
     return
   end
 
@@ -121,7 +121,7 @@ hl.on("window.destroy", function()
   for _, workspace in ipairs(hl.get_workspaces()) do
     local name = workspace.name or ""
     if workspace.id and workspace.id >= 1 and not name:match("^special:")
-      and workspace.windows > 0
+      and #hl.get_workspace_windows(workspace.id) > 0
     then
       local distance = math.abs(workspace.id - closed_workspace_id)
       if not nearest_distance or distance < nearest_distance
