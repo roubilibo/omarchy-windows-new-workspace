@@ -36,33 +36,43 @@ end
 
 os.execute("mkdir -p " .. shell_quote(state_dir))
 
-local function save_enabled(value)
+local function save_state()
   local file = io.open(state_path, "w")
   if not file then return end
-  file:write(value and "true\n" or "false\n")
+  file:write(_G.__windows_new_workspace_enabled and "true\n" or "false\n")
+  file:write(_G.__windows_new_workspace_keep_terminal and "true\n" or "false\n")
   file:close()
 end
 
-local function load_enabled()
+local function load_state()
   local file = io.open(state_path, "r")
-  if not file then return true end
-  local value = file:read("*a") or ""
+  if not file then return true, false end
+  local enabled_value = file:read("*l") or ""
+  local keep_terminal_value = file:read("*l") or ""
   file:close()
-  if value:match("^%s*false%s*$") then return false end
-  return true
+  return enabled_value:match("^%s*false%s*$") == nil,
+    keep_terminal_value:match("^%s*true%s*$") ~= nil
 end
 
-_G.__windows_new_workspace_enabled = load_enabled()
-save_enabled(_G.__windows_new_workspace_enabled)
+_G.__windows_new_workspace_enabled, _G.__windows_new_workspace_keep_terminal = load_state()
+save_state()
 
 local function toggle_enabled()
   _G.__windows_new_workspace_enabled = not _G.__windows_new_workspace_enabled
-  save_enabled(_G.__windows_new_workspace_enabled)
+  save_state()
   hl.exec_cmd(o.notify("New tiled windows on new workspace: "
     .. (_G.__windows_new_workspace_enabled and "ON" or "OFF")))
 end
 
+local function toggle_keep_terminal()
+  _G.__windows_new_workspace_keep_terminal = not _G.__windows_new_workspace_keep_terminal
+  save_state()
+  hl.exec_cmd(o.notify("Keep terminal on its opening workspace: "
+    .. (_G.__windows_new_workspace_keep_terminal and "ON" or "OFF")))
+end
+
 _G.__windows_new_workspace_toggle = toggle_enabled
+_G.__windows_new_workspace_toggle_keep_terminal = toggle_keep_terminal
 
 hl.unbind("SUPER + ALT + L")
 o.bind("SUPER + ALT + L", "Toggle new tiled windows on new workspace", toggle_enabled)
@@ -75,6 +85,14 @@ local function move_to_new_workspace_if_needed(window)
     or not window.workspace
   then
     return
+  end
+
+  if _G.__windows_new_workspace_keep_terminal then
+    for _, tag in ipairs(window.tags or {}) do
+      if tag:gsub("%*$", "") == "terminal" then
+        return
+      end
+    end
   end
 
   local source_workspace = window.workspace

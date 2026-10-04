@@ -4,15 +4,20 @@ Hyprland plugin that moves each newly opened tiled, unpinned window to a fresh
 workspace. Floating and pinned windows stay where they open. Windows opened on
 special workspaces, including the scratchpad, are ignored.
 
-When the last tiled window on the active regular workspace is closed, the
-plugin moves to the numerically nearest regular workspace that still has a
-window. Manually switching to an empty workspace does not trigger this
-behavior. The setting follows the same toggle as automatic placement.
+When automatic placement is enabled and the last tiled window on the active
+regular workspace is closed, the plugin moves to the numerically nearest
+regular workspace that still has a window. Manually switching to an empty
+workspace does not trigger this behavior.
 
 `Super+L` keeps cycling the active workspace layout. `Super+Alt+L` toggles
-automatic placement and sends an Omarchy notification with the new state. The
-bar icon stays visible and toggles the feature when clicked. Its active and
-inactive shapes differ; the inactive icon does not use opacity or muted colors.
+automatic placement and sends an Omarchy notification with the new state.
+Right-clicking the bar icon also toggles automatic placement. Left-clicking it
+opens an options menu with a persistent `Keep terminal` setting. When both
+automatic placement and `Keep terminal` are enabled, newly opened terminal
+windows stay on their opening workspace while other tiled windows move to a
+new workspace. Terminal detection uses Omarchy's `terminal` window tag. The
+bar icon stays visible and its active and inactive shapes differ; the inactive
+icon does not use opacity or muted colors.
 
 ## Install
 
@@ -68,7 +73,7 @@ hyprctl reload
 omarchy plugin remove roubilibo.windows-new-workspace
 ```
 
-The saved toggle state is in `$XDG_STATE_HOME/omarchy/windows-new-workspace`, or
+The saved settings are in `$XDG_STATE_HOME/omarchy/windows-new-workspace`, or
 `~/.local/state/omarchy/windows-new-workspace` when `XDG_STATE_HOME` is unset.
 Delete that file separately if you also want to remove the saved state.
 
