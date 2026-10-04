@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "roubilibo.windows-new-workspace",
   "name": "New Workspace for Tiled Windows",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "author": "roubilibo",
   "license": "MIT",
   "description": "Move each newly opened tiled window to its own workspace.",
