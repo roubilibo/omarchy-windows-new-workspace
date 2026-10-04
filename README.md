@@ -81,8 +81,12 @@ Delete that file separately if you also want to remove the saved state.
 
 - `manifest.json` and `src/Service.qml` let Omarchy discover and enable this
   headless Hyprland plugin; the manifest also registers the status bar icon.
-- `hypr/windows-new-workspace.lua` owns the keybinding and window-open rule.
-- `src/StatusWidget.qml` shows the saved toggle state in the bar.
+- `src/TiledWorkspaceIcon.qml` draws the icon's active and inactive states.
+- `src/StatusWidget.qml` owns the bar button and its options menu.
+- `hypr/windows-new-workspace.lua` checks plugin enablement and loads its Lua
+  modules.
+- `hypr/plugin-logic.lua` owns persisted settings, notifications, and keybinding.
+- `hypr/window-behavior.lua` handles window-open and window-close behavior.
 - `README.md` documents installation and behavior.
 
 ## License
