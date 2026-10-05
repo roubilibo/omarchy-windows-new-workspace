@@ -63,46 +63,22 @@ hl.on("window.open", function(window)
   move_to_new_workspace_if_needed(window)
 end)
 
--- `window.destroy` runs after a window's weak reference has expired, so its
--- properties (including address) are nil. Pair destroy events with close
--- events in order; keep false entries for closes that should not move workspaces.
-local closing_windows = {}
-local closing_windows_head = 1
-local closing_windows_tail = 0
 hl.on("window.close", function(window)
-  local workspace_id = false
-  if _G.__windows_new_workspace_enabled
-    and window
-    and not window.floating
-    and not window.pinned
-    and window.workspace
+  if not _G.__windows_new_workspace_enabled
+    or not window
+    or window.floating
+    or window.pinned
+    or not window.workspace
   then
-    local workspace = window.workspace
-    local name = workspace.name or ""
-    if workspace.id and workspace.id >= 1 and not name:match("^special:") then
-      workspace_id = workspace.id
-    end
-  end
-
-  closing_windows_tail = closing_windows_tail + 1
-  closing_windows[closing_windows_tail] = workspace_id
-end)
-
-hl.on("window.destroy", function()
-  if closing_windows_head > closing_windows_tail then
     return
   end
 
-  local closed_workspace_id = closing_windows[closing_windows_head]
-  closing_windows[closing_windows_head] = nil
-  closing_windows_head = closing_windows_head + 1
-  if closing_windows_head > closing_windows_tail then
-    closing_windows = {}
-    closing_windows_head = 1
-    closing_windows_tail = 0
-  end
-
-  if not _G.__windows_new_workspace_enabled or not closed_workspace_id then
+  local closed_workspace = window.workspace
+  local closed_workspace_id = closed_workspace.id
+  local closed_workspace_name = closed_workspace.name or ""
+  if not closed_workspace_id or closed_workspace_id < 1
+    or closed_workspace_name:match("^special:")
+  then
     return
   end
 
@@ -111,8 +87,19 @@ hl.on("window.destroy", function()
     return
   end
 
-  local closed_workspace = hl.get_workspace(closed_workspace_id)
-  if closed_workspace and #hl.get_workspace_windows(closed_workspace_id) > 0 then
+  local function has_tiled_window(workspace_id)
+    for _, existing in ipairs(hl.get_workspace_windows(workspace_id)) do
+      if existing.address ~= window.address
+        and not existing.floating
+        and not existing.pinned
+      then
+        return true
+      end
+    end
+    return false
+  end
+
+  if has_tiled_window(closed_workspace_id) then
     return
   end
 
@@ -121,6 +108,7 @@ hl.on("window.destroy", function()
   for _, workspace in ipairs(hl.get_workspaces()) do
     local name = workspace.name or ""
     if workspace.id and workspace.id >= 1 and not name:match("^special:")
+      and workspace.id ~= closed_workspace_id
       and #hl.get_workspace_windows(workspace.id) > 0
     then
       local distance = math.abs(workspace.id - closed_workspace_id)
