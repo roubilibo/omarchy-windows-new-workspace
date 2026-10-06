@@ -18,6 +18,21 @@ local function move_to_new_workspace_if_needed(window)
     end
   end
 
+  local keep_matches = _G.__windows_new_workspace_keep_tags or {}
+  for _, keep_match in ipairs(keep_matches) do
+    if window.class == keep_match then
+      return
+    end
+  end
+  for _, tag in ipairs(window.tags or {}) do
+    local normalized_tag = tag:gsub("%*$", "")
+    for _, keep_match in ipairs(keep_matches) do
+      if normalized_tag == keep_match then
+        return
+      end
+    end
+  end
+
   local source_workspace = window.workspace
   local source_name = source_workspace.name or ""
   if (source_workspace.id and source_workspace.id < 1)
@@ -57,13 +72,7 @@ local function move_to_new_workspace_if_needed(window)
   }))
 end
 
--- Move every newly opened tiled window immediately. App-specific title
--- handling belongs in the user's Hyprland configuration, not this plugin.
-hl.on("window.open", function(window)
-  move_to_new_workspace_if_needed(window)
-end)
-
-hl.on("window.close", function(window)
+local function move_to_nearest_workspace_after_close(window)
   if not _G.__windows_new_workspace_enabled
     or not window
     or window.floating
@@ -124,4 +133,24 @@ hl.on("window.close", function(window)
   if nearest_workspace_id then
     hl.dispatch(hl.dsp.focus({ workspace = tostring(nearest_workspace_id) }))
   end
-end)
+end
+
+-- Keep event registrations stable across Hyprland config reloads. The global
+-- handlers are replaced by each dofile, while these wrappers always call the
+-- latest implementation without registering duplicate callbacks.
+_G.__windows_new_workspace_on_open = move_to_new_workspace_if_needed
+_G.__windows_new_workspace_on_close = move_to_nearest_workspace_after_close
+
+if not _G.__windows_new_workspace_handlers_registered then
+  hl.on("window.open", function(window)
+    local handler = _G.__windows_new_workspace_on_open
+    if handler then handler(window) end
+  end)
+
+  hl.on("window.close", function(window)
+    local handler = _G.__windows_new_workspace_on_close
+    if handler then handler(window) end
+  end)
+
+  _G.__windows_new_workspace_handlers_registered = true
+end

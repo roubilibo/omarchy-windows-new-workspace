@@ -7,6 +7,30 @@ if not state_home or state_home == "" then
 end
 local state_dir = state_home .. "/omarchy"
 local state_path = state_dir .. "/windows-new-workspace"
+local source = debug.getinfo(1, "S").source
+local plugin_dir = source:sub(2):match("(.*/)hypr/") or ""
+local keep_classes_path = plugin_dir .. "window-exclusions.conf"
+
+local function valid_tag(tag)
+  return type(tag) == "string" and tag:match("^[%w_.%-]+$") ~= nil
+end
+
+local function load_keep_classes()
+  local classes = {}
+  local seen = {}
+  local file = io.open(keep_classes_path, "r")
+  if not file then return classes end
+
+  for line in file:lines() do
+    local value = line:match("^%s*(.-)%s*$")
+    if value ~= "" and not value:match("^#") and valid_tag(value) and not seen[value] then
+      classes[#classes + 1] = value
+      seen[value] = true
+    end
+  end
+  file:close()
+  return classes
+end
 
 local function shell_quote(value)
   return "'" .. value:gsub("'", "'\\''") .. "'"
@@ -37,7 +61,7 @@ end
 
 local function load_state()
   local file = io.open(state_path, "r")
-  if not file then return true, false end
+  if not file then return true, false, {} end
   local enabled_value = file:read("*l") or ""
   local keep_terminal_value = file:read("*l") or ""
   file:close()
@@ -46,6 +70,7 @@ local function load_state()
 end
 
 _G.__windows_new_workspace_enabled, _G.__windows_new_workspace_keep_terminal = load_state()
+_G.__windows_new_workspace_keep_tags = load_keep_classes()
 save_state()
 
 local function toggle_enabled()

@@ -1,9 +1,5 @@
 -- Hyprland plugin entry point. Keeps lifecycle checks and module loading here.
 
-if rawget(_G, "__windows_new_workspace_plugin") then
-  return true
-end
-
 local function enabled()
   local path = (os.getenv("HOME") or "") .. "/.config/omarchy/shell.json"
   local file = io.open(path, "r")
@@ -17,6 +13,7 @@ local function enabled()
 end
 
 if not enabled() then
+  _G.__windows_new_workspace_enabled = false
   return false
 end
 

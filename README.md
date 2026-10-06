@@ -19,6 +19,39 @@ new workspace. Terminal detection uses Omarchy's `terminal` window tag. The
 bar icon stays visible and its active and inactive shapes differ; the inactive
 icon does not use opacity or muted colors.
 
+## Configure window exclusions
+
+The plugin does not include a personal exclusions file. If you want to keep
+specific windows on their opening workspace, create
+`window-exclusions.conf` in the plugin directory:
+
+```bash
+nano ~/.config/omarchy/plugins/roubilibo.windows-new-workspace/window-exclusions.conf
+```
+
+Add each exact window class or existing Hyprland tag on its own line. For
+example, this keeps the WhatsApp Web window with the matching class in its
+opening workspace:
+
+```text
+chrome-web.whatsapp.com__-Default
+```
+
+To check a window's class, run `hyprctl clients` and find its `class` field.
+Class names are matched directly; no Hyprland window rule is needed for
+class-based exclusions.
+
+Save the file and reload Hyprland so the plugin reads the list:
+
+```bash
+hyprctl reload
+```
+
+Tags work too, if a Hyprland window rule already assigns them. Put the tag
+name on a line by itself. Lines beginning with `#` are comments. If the file
+does not exist, no class or tag exclusions are applied. The built-in
+`Keep terminal` option remains separate.
+
 ## Install
 
 Run this from an interactive terminal to install and enable the plugin with
@@ -73,9 +106,12 @@ hyprctl reload
 omarchy plugin remove roubilibo.windows-new-workspace
 ```
 
-The saved settings are in `$XDG_STATE_HOME/omarchy/windows-new-workspace`, or
+The enabled and `Keep terminal` settings are in
+`$XDG_STATE_HOME/omarchy/windows-new-workspace`, or
 `~/.local/state/omarchy/windows-new-workspace` when `XDG_STATE_HOME` is unset.
-Delete that file separately if you also want to remove the saved state.
+The personal class and tag list is stored in the ignored
+`window-exclusions.conf` file in the plugin directory. It is not included when
+sharing the plugin.
 
 ## Layout
 
