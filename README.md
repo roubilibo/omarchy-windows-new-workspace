@@ -29,17 +29,20 @@ specific windows on their opening workspace, create
 nano ~/.config/omarchy/plugins/roubilibo.windows-new-workspace/window-exclusions.conf
 ```
 
-Add each exact window class or existing Hyprland tag on its own line. For
-example, this keeps the WhatsApp Web window with the matching class in its
-opening workspace:
+Add each exclusion with an explicit type prefix: `class:`, `title:`, or
+`tag:`. For example, this keeps the WhatsApp Web window with the matching
+class in its opening workspace:
 
 ```text
-chrome-web.whatsapp.com__-Default
+class:chrome-web.whatsapp.com__-Default
 ```
 
-To check a window's class, run `hyprctl clients` and find its `class` field.
-Class names are matched directly; no Hyprland window rule is needed for
-class-based exclusions.
+To check a window's class or title, run `hyprctl clients` and find the
+corresponding field. Values are matched exactly and only against the specified
+field, so a class exclusion cannot accidentally match a title or tag.
+If a window initially matches an exclusion by title, the plugin checks again
+when its title changes. It stays on the opening workspace if the new title
+also matches an exclusion; otherwise, the normal new-workspace behavior runs.
 
 Save the file and reload Hyprland so the plugin reads the list:
 
@@ -47,9 +50,10 @@ Save the file and reload Hyprland so the plugin reads the list:
 hyprctl reload
 ```
 
-Tags work too, if a Hyprland window rule already assigns them. Put the tag
-name on a line by itself. Lines beginning with `#` are comments. If the file
-does not exist, no class or tag exclusions are applied. The built-in
+Tags work too, if a Hyprland window rule already assigns them. Prefix the tag
+name with `tag:`. Lines beginning with `#` are comments. Unprefixed lines and
+unknown prefixes are ignored. If the file
+does not exist, no class, title, or tag exclusions are applied. The built-in
 `Keep terminal` option remains separate.
 
 ## Install
