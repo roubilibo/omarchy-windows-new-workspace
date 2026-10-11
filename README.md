@@ -4,10 +4,11 @@ Hyprland plugin that moves each newly opened tiled, unpinned window to a fresh
 workspace. Floating and pinned windows stay where they open. Windows opened on
 special workspaces, including the scratchpad, are ignored.
 
-When automatic placement is enabled and the last tiled window on the active
-regular workspace is closed, the plugin moves to the numerically nearest
-regular workspace that still has a window. Manually switching to an empty
-workspace does not trigger this behavior.
+When automatic placement is enabled and closing a tiled window leaves the active
+regular workspace empty, the plugin moves to the numerically nearest regular
+workspace that still has a window. Floating and pinned windows count as windows
+that keep the workspace occupied. Manually switching to an empty workspace does
+not trigger this behavior.
 
 `Super+L` keeps cycling the active workspace layout. `Super+Alt+L` toggles
 automatic placement and sends an Omarchy notification with the new state.

@@ -108,19 +108,16 @@ local function move_to_nearest_workspace_after_close(window)
     return
   end
 
-  local function has_tiled_window(workspace_id)
+  local function has_remaining_window(workspace_id)
     for _, existing in ipairs(hl.get_workspace_windows(workspace_id)) do
-      if existing.address ~= window.address
-        and not existing.floating
-        and not existing.pinned
-      then
+      if existing.address ~= window.address then
         return true
       end
     end
     return false
   end
 
-  if has_tiled_window(closed_workspace_id) then
+  if has_remaining_window(closed_workspace_id) then
     return
   end
 
